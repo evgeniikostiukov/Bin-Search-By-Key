@@ -38,7 +38,7 @@ function bin_searchByKey($file, $targetValue)
 }
 
 //createFile("Keynumbers.txt", 2000000);
-$file = './Keynubmers.txt';
+$file = './Keynumbers.txt';
 $targetValue = 'ключ3';
 $time = runTime();
 echo bin_searchByKey($file, $targetValue);
