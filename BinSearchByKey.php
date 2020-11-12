@@ -1,43 +1,33 @@
 <?php
 
+function runTime($time = false)
+{
+    return $time === false? microtime(true) : round(microtime(true) - $time, 3);}
+
 function bin_searchByKey($file, $targetValue) {
-    $openfile = fopen("$file", "r");
-    $i = 0;
-    while (feof($openfile) != true) {
-        $readstr = fgets($openfile);
-        echo "<pre>";//echo $readstr;
-        $splitstr[] = explode("\t", $readstr);
-        //print_r($splitstr);
-        $arr_key[] = $splitstr[$i][0];
-        $arr_val[] = $splitstr[$i][1];
-        $i++;
-        $arr_result = array_combine($arr_key, $arr_val);
-    }
-    array_pop($arr_result); array_pop($arr_result);
-    //echo "ARR_KEY";
-    //print_r($arr_key);
-    //echo "ARR_VAL";
-    //print_r($arr_val);
-    echo "ARR_RESULT<br>";
-    print_r($arr_result);
+    $openfile = new SplFileObject($file);
     $left = 0;
-    $right = count($arr_result) - 1;
-    $keys = array_keys($arr_result);
-    //print_r($keys);
+    $right = count(file($file)) - 1;
     while ($left <= $right) {
         $mid = floor(($left + $right) / 2);
-        $search = strnatcmp($keys[$mid], $targetValue);
+        $openfile -> seek($mid);
+        $current_str = explode("\t", $openfile -> current());
+        $search = strnatcmp($current_str[0], $targetValue);
         if ($search > 0) {
             $right = $mid - 1;
         } elseif ($search < 0) {
             $left = $mid + 1;
         } else {
             echo "Искомый ключ - $targetValue<br>Искомое значение ключа - ";
-            return $arr_result[$keys[$mid]];
+            return $current_str[1];
         }
     }
     return "undefined";
 }
-$file = './Keynumbers.txt';
-$targetValue = 'ключ6';
+$file = './test.txt';
+$targetValue = 'ключ3';
+$time=runTime();
 echo bin_searchByKey($file, $targetValue);
+$time=runTime($time);
+echo "<br>".$time." сек.<br>";
+echo round(memory_get_usage() / 1024, 2) ." Кб.";
